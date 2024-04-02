@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using quizlet_back.Models;
+using quizlet_back.Repository.DbModel.Base;
 
 namespace quizlet_back.Repository
 {

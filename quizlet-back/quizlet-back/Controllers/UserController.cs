@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using quizlet_back.Models;
+using quizlet_back.Repository.DbModel;
 using quizlet_back.Service;
 
 namespace quizlet_back.Controllers

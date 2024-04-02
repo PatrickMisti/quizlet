@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using quizlet_back.Models;
+using quizlet_back.Repository.DbModel.Base;
 
 namespace quizlet_back.Configuration
 {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using quizlet_back.Configuration;
 using quizlet_back.ExceptionHandling;
-using quizlet_back.Models;
+using quizlet_back.Repository.DbModel;
 using Serilog;
 using Serilog.Core;
 
@@ -14,12 +14,14 @@ namespace quizlet_back.Repository
         private readonly string _connectionString = "Host=localhost;Database=Card;Port=5432;Username=app;Password=app;";
         public DbSet<Card> Cards { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<TranslationHistory> TranslationHistories { get; set; }
 
         private static Logger _log = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Console()
             .CreateLogger();
 
+        #region consturctor
         public DbDatabase(DbContextOptions<DbDatabase> dbContext) : base(dbContext) { }
 
         public DbDatabase() : this(new DbContextOptionsBuilder<DbDatabase>().Options)
@@ -33,7 +35,9 @@ namespace quizlet_back.Repository
 
             _connectionString = connectionString;
         }
+        #endregion
 
+        #region Config and Modelling
         /// <summary>
         /// Configs Connection with orMapper to Db
         /// </summary>
@@ -67,6 +71,7 @@ namespace quizlet_back.Repository
             // Apply all Configurations
             builder.ApplyConfiguration(new BaseConfiguration<Card>());
             builder.ApplyConfiguration(new BaseConfiguration<User>());
+            builder.ApplyConfiguration(new TranslationConfiguration());
         }
         
         private void InitializeTable(ModelBuilder model)
@@ -74,7 +79,9 @@ namespace quizlet_back.Repository
             // Init all Entities
             model.Entity<Card>();
             model.Entity<User>();
+            model.Entity<TranslationHistory>();
         }
+        #endregion
 
         /// <summary>
         /// Create Table if not exist 
@@ -83,15 +90,11 @@ namespace quizlet_back.Repository
         {
             _log.Debug("DBContext: Create Database");
 
-            try
+            if (!await db.Database.CanConnectAsync())
             {
-                var isCreated = await db.Database.CanConnectAsync();
-
-
-            }
-            catch (Exception ex)
-            {
-                throw new DatabaseNotConnectedException("Couldn't connect to db:" + ex.Message);
+                // todo maybe change db connectionString
+                _log.Error("Connection to Postgre Sql was not success! Start docker container");
+                return;
             }
 
             try
@@ -119,18 +122,23 @@ namespace quizlet_back.Repository
             }
         }
 
+        public static void UpdateTable(DbContext db)
+        {
+            db.Model.GetEntityTypes().Select(t => t.GetTableName()).ToList();
+        }
+
         private static async Task AddDefaultData(DbContext db)
         {
             await db.Database.EnsureCreatedAsync();
             await db.SaveChangesAsync();
 
-            var card = new Card
+            /*var card = new Card
             {
                 EnglishTranslate = "Hello",
                 GermanTranslate = "Hallo"
-            };
+            };*/
 
-            await db.Set<Card>().AddAsync(card);
+            //await db.Set<Card>().AddAsync(card);
             await db.SaveChangesAsync();
 
             var defaultUser = new User

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace quizlet_back.Models
+namespace quizlet_back.Repository.DbModel.Base
 {
     public class BaseEntity
     {

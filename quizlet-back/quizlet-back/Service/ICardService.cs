@@ -1,4 +1,4 @@
-﻿using quizlet_back.Models;
+﻿using quizlet_back.Repository.DbModel;
 
 namespace quizlet_back.Service
 {

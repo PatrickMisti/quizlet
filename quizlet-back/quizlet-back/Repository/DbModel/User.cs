@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using quizlet_back.Repository.DbModel.Base;
 
-namespace quizlet_back.Models
+namespace quizlet_back.Repository.DbModel
 {
     [Serializable, DataContract]
-    public class User: BaseEntity
+    public class User : BaseEntity
     {
         [EmailAddress]
         [DataMember(Name = "email")]
@@ -23,6 +24,6 @@ namespace quizlet_back.Models
             Role = role;
         }
 
-        public User() {}
+        public User() { }
     }
 }
